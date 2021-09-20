@@ -30,35 +30,73 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///fyyur'
 # Models.
 #----------------------------------------------------------------------------#
 
-class Venue(db.Model):
-    __tablename__ = 'Venue'
+#^ (Optional) TODO: Location relationship
+
+#*Completed*
+artist_genres = db.Table("artist_genres", 
+                          db.Column("genre_id",db.Integer, db.ForeignKey('genres.id'), nullable = False, primary_key = True),
+                          db.Column("artist_id",db.Integer, db.ForeignKey('artists.id'), nullable = False, primary_key = True)
+                          )
+
+#*Completed*
+venue_genres = db.Table("venue_genres", 
+                          db.Column("genre_id",db.Integer, db.ForeignKey('genres.id'), nullable = False, primary_key = True),
+                          db.Column("venue_id",db.Integer, db.ForeignKey('venues.id'), nullable = False, primary_key = True)
+                          )
+
+class Venue(db.Model): 
+    # *Completed* 
+    __tablename__ = 'venues'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
+    address = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
+    image_link = db.Column(db.String(500), default="")
+    facebook_link = db.Column(db.String(500), default="")
+    website_link = db.Column(db.String(500), default="")
+    talent_hunting = db.Column(db.Boolean, nullable=False, default=False)
+    talent_description = db.Column(db.String(500), nullable=False)
+    genres = db.relationship('Genres', secondary= venue_genres, backref=db.backref('venue', lazy=True))
+    shows = db.relationship('Show', backref='show', lazy=True)
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
-class Artist(db.Model):
-    __tablename__ = 'Artist'
+class Artists(db.Model):
+    # *Completed* 
+    __tablename__ = 'artists'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
+    phone = db.Column(db.String(120), nullable=False)
+    image_link = db.Column(db.String(500), default="")
+    facebook_link = db.Column(db.String(120), default="")
+    website_link = db.Column(db.String(120), default="")
+    venue_hunting = db.Column(db.Boolean, nullable=False, default=False)
+    venue_description = db.Column(db.String(500), nullable=False)
+    genres = db.relationship('Genres', secondary= artist_genres, backref=db.backref('artist', lazy=True))
+    shows = db.relationship('Show', backref='show', lazy=True)
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+class Genres(db.Model):
+      # *Completed*
+    __tablename__ = 'genres'
+
+    id = db.Column(db.Integer, primary_key=True)
+    genres = db.Column(db.String(120), nullable=False)
+
+
+
+class ShowsList(db.Model):
+      # /*Completed*
+    __tablename__ = 'shows_list'
+    
+    venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False, primary_key=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable = False, primary_key=True)
+    event_time = db.Column(db.DateTime, nullable=False)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -67,9 +105,9 @@ class Artist(db.Model):
 def format_datetime(value, format='medium'):
   date = dateutil.parser.parse(value)
   if format == 'full':
-      format="EEEE MMMM, d, y 'at' h:mma"
+      format="EEEE dd, MMMM, y 'at' h:mma"
   elif format == 'medium':
-      format="EE MM, dd, y h:mma"
+      format="EE dd, MM, y h:mma"
   return babel.dates.format_datetime(date, format, locale='en')
 
 app.jinja_env.filters['datetime'] = format_datetime
