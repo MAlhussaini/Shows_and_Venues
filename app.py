@@ -91,7 +91,7 @@ class Genres(db.Model):
 
 
 class ShowsList(db.Model):
-      # /*Completed*
+      # *Completed*
     __tablename__ = 'shows_list'
     
     venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False, primary_key=True)
