@@ -62,7 +62,7 @@ class Venue(db.Model):
     talent_hunting = db.Column(db.Boolean, nullable=False, default=False)
     talent_description = db.Column(db.String(500), nullable=False)
     genres = db.relationship('Genres', secondary= venue_genres, backref=db.backref('venue', lazy=True))
-    # shows = db.relationship('Show', backref='show', lazy=True)
+    # shows = db.relationship('shows_list', backref='show', lazy=True)
 
 
 class Artists(db.Model):
@@ -80,7 +80,7 @@ class Artists(db.Model):
     venue_hunting = db.Column(db.Boolean, nullable=False, default=False)
     venue_description = db.Column(db.String(500), nullable=False)
     genres = db.relationship('Genres', secondary= artist_genres, backref=db.backref('artist', lazy=True))
-    # shows = db.relationship('Show', backref='show', lazy=True)
+    # shows = db.relationship('shows_list', backref='show', lazy=True)
 
 
 class Genres(db.Model):
@@ -263,40 +263,26 @@ def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
-# TODO
+# TODO: Remove all prints after fixing the function
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
     print("Help111")
     error = False
     try:
         print("Help222")
-
-        name = 'name'
-        city = 'city'
-        state = 'state'
-        address = 'address'
-        phone = 'phone'
-        # genres = 'genres'
-        facebook_link = 'facebook_link'
-        image_link = 'image_link'
-        website_link = 'website_link'
-        seeking_talent = False
-        seeking_description = 'seeking_description'
-
-        # name = request.get_json()['name']
-        # city = request.get_json()['city']
-        # state = request.get_json()['state']
-        # address = request.get_json()['address']
-        # phone = request.get_json()['phone']
-        # # TODO: Add genres
+        name = request.get_json()['name']
+        city = request.get_json()['city']
+        state = request.get_json()['state']
+        address = request.get_json()['address']
+        phone = request.get_json()['phone']
+        # TODO: Add genres
         # genres = request.get_json()['genres']
-        # facebook_link = request.get_json()['facebook_link']
-        # image_link = request.get_json()['image_link']
-        # website_link = request.get_json()['website_link']
-        # seeking_talent = request.get_json()['seeking_talent']
-        # seeking_description = request.get_json()['seeking_description']
+        facebook_link = request.get_json()['facebook_link']
+        image_link = request.get_json()['image_link']
+        website_link = request.get_json()['website_link']
+        seeking_talent = request.get_json()['seeking_talent']
+        seeking_description = request.get_json()['seeking_description']
         print("Help333")
-
         venues = Venue(
                         name = name,
                         city  = city,
@@ -312,11 +298,9 @@ def create_venue_submission():
                         talent_description  = seeking_description
                     )
         print("Help444")
-
         db.session.add(venues)
         db.session.commit()
         print("Help555")
-
         # on successful db insert, flash success
         flash('Venue ' + name + ' was successfully listed!')
         print("Help666")
@@ -329,11 +313,9 @@ def create_venue_submission():
         print(sys.exc_info())
         print("Help999")
 
-        # TODO: on unsuccessful db insert, flash an error instead.
-        # e.g., on successful db insert, flash success
-        # flash('Venue ' + request.form['name'] + ' was successfully listed!')
-        flash('An error occurred. Venue ' + name + ' could not be listed.')
         # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+        # on unsuccessful db insert, flash an error instead.
+        flash('An error occurred. Venue ' + name + ' could not be listed.')
     finally:
         print("Helpaaa")
         db.session.close()
@@ -342,7 +324,9 @@ def create_venue_submission():
         abort(500)
     else:
         print("Helpccc")
-        return render_template('pages/home.html')
+        # return render_template('pages/home.html')
+        return redirect(url_for('index'))
+
 
 # TODO
 @app.route('/venues/<venue_id>', methods=['DELETE'])
