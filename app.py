@@ -5,14 +5,16 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
-from logging import Formatter, FileHandler
+from logging import Formatter, FileHandler, error
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
+import sys
+from sqlalchemy.orm import lazyload
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -60,7 +62,7 @@ class Venue(db.Model):
     talent_hunting = db.Column(db.Boolean, nullable=False, default=False)
     talent_description = db.Column(db.String(500), nullable=False)
     genres = db.relationship('Genres', secondary= venue_genres, backref=db.backref('venue', lazy=True))
-    shows = db.relationship('Show', backref='show', lazy=True)
+    # shows = db.relationship('Show', backref='show', lazy=True)
 
 
 class Artists(db.Model):
@@ -78,7 +80,7 @@ class Artists(db.Model):
     venue_hunting = db.Column(db.Boolean, nullable=False, default=False)
     venue_description = db.Column(db.String(500), nullable=False)
     genres = db.relationship('Genres', secondary= artist_genres, backref=db.backref('artist', lazy=True))
-    shows = db.relationship('Show', backref='show', lazy=True)
+    # shows = db.relationship('Show', backref='show', lazy=True)
 
 
 class Genres(db.Model):
@@ -123,7 +125,7 @@ def index():
 
 #  Venues
 #  ----------------------------------------------------------------
-
+# TODO
 @app.route('/venues')
 def venues():
   # TODO: replace with real venues data.
@@ -151,6 +153,7 @@ def venues():
   }]
   return render_template('pages/venues.html', areas=data);
 
+# TODO
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
@@ -166,6 +169,7 @@ def search_venues():
   }
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
+# TODO
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
@@ -253,23 +257,94 @@ def show_venue(venue_id):
 #  Create Venue
 #  ----------------------------------------------------------------
 
+# TODO
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
+# TODO
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+    print("Help111")
+    error = False
+    try:
+        print("Help222")
 
-  # on successful db insert, flash success
-  flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
+        name = 'name'
+        city = 'city'
+        state = 'state'
+        address = 'address'
+        phone = 'phone'
+        # genres = 'genres'
+        facebook_link = 'facebook_link'
+        image_link = 'image_link'
+        website_link = 'website_link'
+        seeking_talent = False
+        seeking_description = 'seeking_description'
 
+        # name = request.get_json()['name']
+        # city = request.get_json()['city']
+        # state = request.get_json()['state']
+        # address = request.get_json()['address']
+        # phone = request.get_json()['phone']
+        # # TODO: Add genres
+        # genres = request.get_json()['genres']
+        # facebook_link = request.get_json()['facebook_link']
+        # image_link = request.get_json()['image_link']
+        # website_link = request.get_json()['website_link']
+        # seeking_talent = request.get_json()['seeking_talent']
+        # seeking_description = request.get_json()['seeking_description']
+        print("Help333")
+
+        venues = Venue(
+                        name = name,
+                        city  = city,
+                        state  = state,
+                        address  = address,
+                        phone  = phone,
+                        # TODO: Add genres
+                        # genres = genres,
+                        image_link  = image_link,
+                        facebook_link  = facebook_link,
+                        website_link  = website_link,
+                        talent_hunting  = seeking_talent,
+                        talent_description  = seeking_description
+                    )
+        print("Help444")
+
+        db.session.add(venues)
+        db.session.commit()
+        print("Help555")
+
+        # on successful db insert, flash success
+        flash('Venue ' + name + ' was successfully listed!')
+        print("Help666")
+    except:
+        error = True
+        print("Help777")
+        db.session.rollback()
+        print("Help888")
+
+        print(sys.exc_info())
+        print("Help999")
+
+        # TODO: on unsuccessful db insert, flash an error instead.
+        # e.g., on successful db insert, flash success
+        # flash('Venue ' + request.form['name'] + ' was successfully listed!')
+        flash('An error occurred. Venue ' + name + ' could not be listed.')
+        # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    finally:
+        print("Helpaaa")
+        db.session.close()
+    if error:
+        print("Helpbbb")
+        abort(500)
+    else:
+        print("Helpccc")
+        return render_template('pages/home.html')
+
+# TODO
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
@@ -281,6 +356,7 @@ def delete_venue(venue_id):
 
 #  Artists
 #  ----------------------------------------------------------------
+# TODO
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
@@ -296,6 +372,7 @@ def artists():
   }]
   return render_template('pages/artists.html', artists=data)
 
+# TODO
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
@@ -311,6 +388,7 @@ def search_artists():
   }
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
+# TODO
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   # shows the artist page with the given artist_id
@@ -391,6 +469,7 @@ def show_artist(artist_id):
 
 #  Update
 #  ----------------------------------------------------------------
+# TODO
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
@@ -410,6 +489,7 @@ def edit_artist(artist_id):
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
+# TODO
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
@@ -417,6 +497,7 @@ def edit_artist_submission(artist_id):
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
+# TODO
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
   form = VenueForm()
@@ -437,6 +518,7 @@ def edit_venue(venue_id):
   # TODO: populate form with values from venue with ID <venue_id>
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
+# TODO
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
@@ -446,11 +528,13 @@ def edit_venue_submission(venue_id):
 #  Create Artist
 #  ----------------------------------------------------------------
 
+# TODO
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
+# TODO
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   # called upon submitting the new artist listing form
@@ -467,6 +551,7 @@ def create_artist_submission():
 #  Shows
 #  ----------------------------------------------------------------
 
+# TODO
 @app.route('/shows')
 def shows():
   # displays list of shows at /shows
@@ -509,12 +594,14 @@ def shows():
   }]
   return render_template('pages/shows.html', shows=data)
 
+# TODO
 @app.route('/shows/create')
 def create_shows():
   # renders form. do not touch.
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
 
+# TODO
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
