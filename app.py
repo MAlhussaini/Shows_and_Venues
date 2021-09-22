@@ -47,8 +47,8 @@ venue_genres = db.Table("venue_genres",
                           db.Column("venue_id",db.Integer, db.ForeignKey('venues.id'), nullable = False, primary_key = True)
                           )
 
+# *Completed* 
 class Venues(db.Model): 
-    # *Completed* 
     __tablename__ = 'venues'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -65,9 +65,8 @@ class Venues(db.Model):
     genres = db.relationship('Genres', secondary= venue_genres, backref=db.backref('venue', lazy=True))
     # shows = db.relationship('shows_list', backref='show', lazy=True)
 
-
+# *Completed* 
 class Artists(db.Model):
-    # *Completed* 
     __tablename__ = 'artists'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -83,22 +82,20 @@ class Artists(db.Model):
     genres = db.relationship('Genres', secondary= artist_genres, backref=db.backref('artist', lazy=True))
     # shows = db.relationship('shows_list', backref='show', lazy=True)
 
-
+# *Completed*
 class Genres(db.Model):
-      # *Completed*
     __tablename__ = 'genres'
 
     id = db.Column(db.Integer, primary_key=True)
     genres = db.Column(db.String(120), nullable=False)
 
-
-
+# *Completed*
 class ShowsList(db.Model):
-      # *Completed*
     __tablename__ = 'shows_list'
     
-    venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable = False, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable = False)
     event_time = db.Column(db.DateTime, nullable=False)
 
 #----------------------------------------------------------------------------#
@@ -351,26 +348,14 @@ def artists():
   }]
   return render_template('pages/artists.html', artists=data)
 
-# TODO
+# *Completed*
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
-  # search for "band" should return "The Wild Sax Band".
-  # response={
-  #   "count": 1,
-  #   "data": [{
-  #     "id": 4,
-  #     "name": "Guns N Petals",
-  #     "num_upcoming_shows": 0,
-  #   }]
-  # }
     search_term=request.form.get('search_term', '')
     filtering = Artists.query.filter(Artists.name.ilike('%'+search_term+'%'))
     response = filtering.order_by('id').all()
     count = filtering.count()
 
-  
     return render_template('pages/search_artists.html', results=response, search_term=search_term, count=count)
 
 # TODO
