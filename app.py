@@ -6,6 +6,7 @@ import json
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
+from werkzeug.wrappers import response
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -46,7 +47,7 @@ venue_genres = db.Table("venue_genres",
                           db.Column("venue_id",db.Integer, db.ForeignKey('venues.id'), nullable = False, primary_key = True)
                           )
 
-class Venue(db.Model): 
+class Venues(db.Model): 
     # *Completed* 
     __tablename__ = 'venues'
 
@@ -153,21 +154,14 @@ def venues():
   }]
   return render_template('pages/venues.html', areas=data);
 
-# TODO
+# *Completed*
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    search_term=request.form.get('search_term', '')
+    filtering = Venues.query.filter(Venues.name.ilike('%'+search_term+'%'))
+    response = filtering.order_by('id').all()
+    count = filtering.count()
+    return render_template('pages/search_venues.html', results=response, search_term=search_term, count=count)
 
 # TODO
 @app.route('/venues/<int:venue_id>')
@@ -263,7 +257,8 @@ def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
-# TODO: Remove all prints after fixing the function
+# /TODO: Remove all prints after fixing the function
+# *Partially Completed*
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
     print("Help111")
@@ -283,7 +278,7 @@ def create_venue_submission():
         seeking_talent = request.get_json()['seeking_talent']
         seeking_description = request.get_json()['seeking_description']
         print("Help333")
-        venues = Venue(
+        venues = Venues(
                         name = name,
                         city  = city,
                         state  = state,
@@ -362,15 +357,21 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
-  }
-  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+  # response={
+  #   "count": 1,
+  #   "data": [{
+  #     "id": 4,
+  #     "name": "Guns N Petals",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }
+    search_term=request.form.get('search_term', '')
+    filtering = Artists.query.filter(Artists.name.ilike('%'+search_term+'%'))
+    response = filtering.order_by('id').all()
+    count = filtering.count()
+
+  
+    return render_template('pages/search_artists.html', results=response, search_term=search_term, count=count)
 
 # TODO
 @app.route('/artists/<int:artist_id>')
@@ -518,7 +519,8 @@ def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
-# TODO
+# /TODO: Remove all prints after fixing the function
+# *Partially Completed*
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
     # called upon submitting the new artist listing form
@@ -582,11 +584,11 @@ def create_artist_submission():
         print("Helpccc")
         # return render_template('pages/home.html')
         return redirect(url_for('index'))
-#   # on successful db insert, flash success
-#   flash('Artist ' + request.form['name'] + ' was successfully listed!')
-#   # TODO: on unsuccessful db insert, flash an error instead.
-#   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
-#   return render_template('pages/home.html')
+    #   # on successful db insert, flash success
+    #   flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    #   # TODO: on unsuccessful db insert, flash an error instead.
+    #   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+    #   return render_template('pages/home.html')
 
 
 #  Shows
