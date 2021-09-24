@@ -276,18 +276,18 @@ def create_venue_submission():
         seeking_description = request.get_json()['seeking_description']
         print("Help333")
         venues = Venues(
-                        name = name,
-                        city  = city,
-                        state  = state,
-                        address  = address,
-                        phone  = phone,
-                        # TODO: Add genres
-                        # genres = genres,
-                        image_link  = image_link,
-                        facebook_link  = facebook_link,
-                        website_link  = website_link,
-                        talent_hunting  = seeking_talent,
-                        talent_description  = seeking_description
+                    name = name,
+                    city  = city,
+                    state  = state,
+                    address  = address,
+                    phone  = phone,
+                    # TODO: Add genres
+                    # genres = genres,
+                    image_link  = image_link,
+                    facebook_link  = facebook_link,
+                    website_link  = website_link,
+                    talent_hunting  = seeking_talent,
+                    talent_description  = seeking_description
                     )
         print("Help444")
         db.session.add(venues)
@@ -511,10 +511,10 @@ def create_artist_submission():
     # called upon submitting the new artist listing form
     # TODO: insert form data as a new Venue record in the db, instead
     # TODO: modify data to be the data object returned from db insertion
-    print("Help111")
+    print("HelpMe111")
     error = False
     try:
-        print("Help222")
+        print("HelpMe222")
         name = request.get_json()['name']
         city = request.get_json()['city']
         state = request.get_json()['state']
@@ -526,7 +526,7 @@ def create_artist_submission():
         website_link = request.get_json()['website_link']
         seeking_venue = request.get_json()['seeking_venue']
         seeking_description = request.get_json()['seeking_description']
-        print("Help333")
+        print("HelpMe333")
         artists = Artists(
                         name = name,
                         city  = city,
@@ -540,33 +540,33 @@ def create_artist_submission():
                         venue_hunting  = seeking_venue,
                         venue_description  = seeking_description
                     )
-        print("Help444")
+        print("HelpMe444")
         db.session.add(artists)
         db.session.commit()
-        print("Help555")
+        print("HelpMe555")
         # on successful db insert, flash success
         flash('Artist ' + name + ' was successfully listed!')
-        print("Help666")
+        print("HelpMe666")
     except:
         error = True
-        print("Help777")
+        print("HelpMe777")
         db.session.rollback()
-        print("Help888")
+        print("HelpMe888")
 
         print(sys.exc_info())
-        print("Help999")
+        print("HelpMe999")
 
         # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
         # on unsuccessful db insert, flash an error instead.
         flash('An error occurred. Artist ' + name + ' could not be listed.')
     finally:
-        print("Helpaaa")
+        print("HelpMeaaa")
         db.session.close()
     if error:
-        print("Helpbbb")
+        print("HelpMebbb")
         abort(500)
     else:
-        print("Helpccc")
+        print("HelpMeccc")
         # return render_template('pages/home.html')
         return redirect(url_for('index'))
     #   # on successful db insert, flash success
