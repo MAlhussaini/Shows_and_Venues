@@ -3,7 +3,6 @@ window.parseISOString = function parseISOString(s) {
     return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
 };
 if (location.pathname == "/artists/create") {
-    alert('hey222!');
     document.getElementById("artist-form").onsubmit = function(e) {
         e.preventDefault();
 
@@ -40,7 +39,6 @@ if (location.pathname == "/artists/create") {
 
 }
 if (location.pathname == "/venues/create") {
-    alert('hey!');
     document.getElementById("venue-form").onsubmit = function(e) {
         e.preventDefault();
 
@@ -60,6 +58,33 @@ if (location.pathname == "/venues/create") {
                     'website_link': document.getElementById('website_link').value,
                     'seeking_talent': document.getElementById('seeking_talent').checked,
                     'seeking_description': document.getElementById('seeking_description').value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function() {
+                window.location.href = "/";
+            })
+            .catch(function() {
+                window.location.href = "/";
+            })
+    }
+}
+if (location.pathname == "/shows/create") {
+    document.getElementById("show-form").onsubmit = function(e) {
+        e.preventDefault();
+
+        fetch('/shows/create', {
+                method: 'POST',
+
+                body: JSON.stringify({
+                    'artist_id': document.getElementById('artist_id').value,
+                    'venue_id': document.getElementById('venue_id').value,
+                    'start_time': document.getElementById('start_time').value,
                 }),
                 headers: {
                     'Content-Type': 'application/json'
