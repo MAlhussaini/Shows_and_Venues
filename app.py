@@ -16,6 +16,8 @@ from forms import *
 from flask_migrate import Migrate
 import sys
 from sqlalchemy.orm import lazyload
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text 
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -28,6 +30,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db) 
 #// TODO: connect to a local postgresql database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///fyyur'
+engine = create_engine('postgresql:///fyyur')
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -103,12 +106,15 @@ class ShowsList(db.Model):
 #----------------------------------------------------------------------------#
 
 def format_datetime(value, format='medium'):
-  date = dateutil.parser.parse(value)
-  if format == 'full':
-      format="EEEE dd, MMMM, y 'at' h:mma"
-  elif format == 'medium':
-      format="EE dd, MM, y h:mma"
-  return babel.dates.format_datetime(date, format, locale='en')
+    if isinstance(value, str):
+        date = dateutil.parser.parse(value)
+    else:
+        date = value
+    if format == 'full':
+        format="EEEE dd, MMMM, y 'at' h:mma"
+    elif format == 'medium':
+        format="EE dd, MM, y h:mma"
+    return babel.dates.format_datetime(date, format, locale='en')        
 
 app.jinja_env.filters['datetime'] = format_datetime
 
@@ -579,48 +585,11 @@ def create_artist_submission():
 #  Shows
 #  ----------------------------------------------------------------
 
-# TODO
+# *Completed*
 @app.route('/shows')
 def shows():
-  # displays list of shows at /shows
-  # TODO: replace with real venues data.
-  data=[{
-    "venue_id": 1,
-    "venue_name": "The Musical Hop",
-    "artist_id": 4,
-    "artist_name": "Guns N Petals",
-    "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-    "start_time": "2019-05-21T21:30:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 5,
-    "artist_name": "Matt Quevedo",
-    "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-    "start_time": "2019-06-15T23:00:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 6,
-    "artist_name": "The Wild Sax Band",
-    "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-    "start_time": "2035-04-01T20:00:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 6,
-    "artist_name": "The Wild Sax Band",
-    "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-    "start_time": "2035-04-08T20:00:00.000Z"
-  }, {
-    "venue_id": 3,
-    "venue_name": "Park Square Live Music & Coffee",
-    "artist_id": 6,
-    "artist_name": "The Wild Sax Band",
-    "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-    "start_time": "2035-04-15T20:00:00.000Z"
-  }]
-  return render_template('pages/shows.html', shows=data)
+    data = db.session.query(ShowsList,Venues,Artists).select_from(ShowsList).join(Venues).join(Artists).all()
+    return render_template('pages/shows.html', shows=data)
 
 # TODO
 @app.route('/shows/create')
