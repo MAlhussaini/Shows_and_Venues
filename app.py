@@ -18,6 +18,8 @@ import sys
 from sqlalchemy.orm import lazyload
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text 
+from datetime import datetime
+
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -227,8 +229,22 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=data)
+#   data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
+#   search_term=request.form.get('search_term', '')
+  now = datetime.now()
+  shows = ShowsList.query.filter_by(venue_id=venue_id).join(Artists)
+  print(shows)
+  response = shows.order_by('id').all()
+  count = shows.count()
+
+  data = Venues.query.get(venue_id)
+  
+  return render_template('pages/show_venue.html', 
+                         venue=data, 
+                         past_shows_count = count, 
+                         past_shows = response, 
+                         upcoming_shows_count = count, 
+                         upcoming_shows = response)
 
 #  Create Venue
 #  ----------------------------------------------------------------
