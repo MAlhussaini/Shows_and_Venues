@@ -229,23 +229,37 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-#   data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-#   search_term=request.form.get('search_term', '')
   now = datetime.now()
-  shows = ShowsList.query.filter_by(venue_id=venue_id).join(Artists)
-  print(shows)
-  response = shows.order_by('id').all()
-  count = shows.count()
+  response = db.session.query(ShowsList,Artists).join(Artists).filter(ShowsList.venue_id==venue_id)
+  past_shows = response.filter(ShowsList.event_time<now)
+  upcoming_shows = response.filter(ShowsList.event_time>=now)
+  responses = response.all()
+  # shows = ShowsList.query.filter_by(venue_id=venue_id).join(Artists)
+  # response = shows.order_by('id').all()
+  for shows_list, artists in responses:
+    print(responses)
+    print(artists)
+    print(shows_list)
+    print(artists.name)
+    print(artists.image_link)
+    print(shows_list.event_time)
+  count = response.count()
 
   data = Venues.query.get(venue_id)
   
   return render_template('pages/show_venue.html', 
                          venue=data, 
-                         past_shows_count = count, 
-                         past_shows = response, 
-                         upcoming_shows_count = count, 
-                         upcoming_shows = response)
+                         past_shows_count = past_shows.count(), 
+                         past_shows = past_shows.all(), 
+                         upcoming_shows_count = upcoming_shows.count(), 
+                         upcoming_shows = upcoming_shows.all())
 
+  # SELECT shows_list.id AS shows_list_id, shows_list.venue_id AS shows_list_venue_id, shows_list.artist_id AS shows_list_artist_id, shows_list.event_time AS shows_list_event_time
+  # FROM shows_list 
+  # JOIN artists 
+  # ON artists.id = shows_list.artist_id
+  # WHERE shows_list.venue_id = %(venue_id_1)s
+  
 #  Create Venue
 #  ----------------------------------------------------------------
 
