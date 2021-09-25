@@ -277,25 +277,13 @@ def show_artist(artist_id):
 
 #  Update
 #  ----------------------------------------------------------------
-# TODO
+# *Completed*
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
-  artist={
-    "id": 1,
-    "name": "Guns N Petals",
-    "genres": ["Rock n Roll"],
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
-    "facebook_link": "https://www.facebook.com/GunsNPetals",
-    "seeking_venue": True,
-    "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-    "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-  }
-  # TODO: populate form with fields from artist with ID <artist_id>
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
+  artist = Artists.query.get(artist_id)
+  genres = Genres.query.all()
+  return render_template('forms/edit_artist.html', form=form, artist=artist, genres=genres)
 
 # TODO
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
@@ -336,7 +324,6 @@ def edit_venue_submission(venue_id):
 #  Create Artist
 #  ----------------------------------------------------------------
 
-# TODO
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
   form = ArtistForm()
@@ -406,7 +393,6 @@ def shows():
     data = db.session.query(ShowsList,Venues,Artists).select_from(ShowsList).join(Venues).join(Artists).all()
     return render_template('pages/shows.html', shows=data)
 
-# TODO
 @app.route('/shows/create')
 def create_shows():
   # renders form. do not touch.
