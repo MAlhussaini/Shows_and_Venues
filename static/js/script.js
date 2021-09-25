@@ -5,6 +5,8 @@ window.parseISOString = function parseISOString(s) {
 if (location.pathname == "/artists/create") {
     document.getElementById("artist-form").onsubmit = function(e) {
         e.preventDefault();
+        const selected = document.querySelectorAll('#genres option:checked');
+        const values = Array.from(selected).map(el => el.value);
 
         fetch('/artists/create', {
                 method: 'POST',
@@ -14,8 +16,7 @@ if (location.pathname == "/artists/create") {
                     'city': document.getElementById('city').value,
                     'state': document.getElementById('state').value,
                     'phone': document.getElementById('phone').value,
-                    // TODO: Configure genres
-                    'genres': document.getElementById('genres').value,
+                    'genres': values,
                     'facebook_link': document.getElementById('facebook_link').value,
                     'image_link': document.getElementById('image_link').value,
                     'website_link': document.getElementById('website_link').value,
@@ -41,6 +42,8 @@ if (location.pathname == "/artists/create") {
 if (location.pathname == "/venues/create") {
     document.getElementById("venue-form").onsubmit = function(e) {
         e.preventDefault();
+        const selected = document.querySelectorAll('#genres option:checked');
+        const values = Array.from(selected).map(el => el.value);
 
         fetch('/venues/create', {
                 method: 'POST',
@@ -51,8 +54,7 @@ if (location.pathname == "/venues/create") {
                     'state': document.getElementById('state').value,
                     'address': document.getElementById('address').value,
                     'phone': document.getElementById('phone').value,
-                    // TODO: Configure genres
-                    'genres': document.getElementById('genres').value,
+                    'genres': values,
                     'facebook_link': document.getElementById('facebook_link').value,
                     'image_link': document.getElementById('image_link').value,
                     'website_link': document.getElementById('website_link').value,

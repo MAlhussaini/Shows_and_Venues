@@ -171,68 +171,55 @@ def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
-# /TODO: Remove all prints after fixing the function
-# *Partially Completed*
+# *Completed*
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    print("Help111")
     error = False
     try:
-        print("Help222")
         name = request.get_json()['name']
         city = request.get_json()['city']
         state = request.get_json()['state']
         address = request.get_json()['address']
         phone = request.get_json()['phone']
-        # TODO: Add genres
-        # genres = request.get_json()['genres']
+        genres = request.get_json()['genres']
         facebook_link = request.get_json()['facebook_link']
         image_link = request.get_json()['image_link']
         website_link = request.get_json()['website_link']
         seeking_talent = request.get_json()['seeking_talent']
         seeking_description = request.get_json()['seeking_description']
-        print("Help333")
         venues = Venues(
                     name = name,
                     city  = city,
                     state  = state,
                     address  = address,
                     phone  = phone,
-                    # TODO: Add genres
-                    # genres = genres,
                     image_link  = image_link,
                     facebook_link  = facebook_link,
                     website_link  = website_link,
                     talent_hunting  = seeking_talent,
                     talent_description  = seeking_description
                     )
-        print("Help444")
         db.session.add(venues)
+        
         db.session.commit()
-        print("Help555")
+        for genre in genres:
+              venue_genres = Genres.query.filter_by(genres=genre).first()
+              venues.genres.append(venue_genres)
+              db.session.commit()
         # on successful db insert, flash success
         flash('Venue ' + name + ' was successfully listed!')
-        print("Help666")
     except:
         error = True
-        print("Help777")
         db.session.rollback()
-        print("Help888")
-
         print(sys.exc_info())
-        print("Help999")
-
         # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
         # on unsuccessful db insert, flash an error instead.
         flash('An error occurred. Venue ' + name + ' could not be listed.')
     finally:
-        print("Helpaaa")
         db.session.close()
     if error:
-        print("Helpbbb")
         abort(500)
     else:
-        print("Helpccc")
         # return render_template('pages/home.html')
         return redirect(url_for('index'))
 
