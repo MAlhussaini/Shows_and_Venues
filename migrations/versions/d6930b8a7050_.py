@@ -116,7 +116,7 @@ def upgrade():
     
     
     #~ Insert into Genres
-    op.execute('INSERT INTO genres (genres) VALUES (\'Alternative\'), (\'Blues\'), (\'Classical\'), (\'Country\'), (\'Electronic\'), (\'Folk\'), (\'Funk\'), (\'Hip-Hop\'), (\'Heavy Metal\'), (\'Instrumental\'), (\'Jazz\'), (\'Musical Theatre\'), (\'Pop\'), (\'Punk\'), (\'R&amp;B\'), (\'Reggae\'), (\'Rock n Roll\'), (\'Soul\'), (\'Swing\'), (\'Other\');')
+    op.execute('INSERT INTO genres (genres) VALUES (\'Alternative\'), (\'Blues\'), (\'Classical\'), (\'Country\'), (\'Electronic\'), (\'Folk\'), (\'Funk\'), (\'Hip-Hop\'), (\'Heavy Metal\'), (\'Instrumental\'), (\'Jazz\'), (\'Musical Theatre\'), (\'Pop\'), (\'Punk\'), (\'R&B\'), (\'Reggae\'), (\'Rock n Roll\'), (\'Soul\'), (\'Swing\'), (\'Other\');')
 
     #~ Insert into artist_genres
     op.execute('INSERT INTO artist_genres (genre_id, artist_id) VALUES (\'17\', \'1\');')
