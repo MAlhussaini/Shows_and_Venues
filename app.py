@@ -200,7 +200,6 @@ def create_venue_submission():
                     talent_description  = seeking_description
                     )
         db.session.add(venues)
-        
         db.session.commit()
         for genre in genres:
               venue_genres = Genres.query.filter_by(genres=genre).first()
@@ -336,74 +335,57 @@ def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
-# /TODO: Remove all prints after fixing the function
-# *Partially Completed*
+# *Completed*
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-    # called upon submitting the new artist listing form
-    # TODO: insert form data as a new Venue record in the db, instead
-    # TODO: modify data to be the data object returned from db insertion
-    print("HelpMe111")
     error = False
     try:
-        print("HelpMe222")
         name = request.get_json()['name']
         city = request.get_json()['city']
         state = request.get_json()['state']
         phone = request.get_json()['phone']
-        # TODO: Add genres
-        # genres = request.get_json()['genres']
+        genres = request.get_json()['genres']
         facebook_link = request.get_json()['facebook_link']
         image_link = request.get_json()['image_link']
         website_link = request.get_json()['website_link']
         seeking_venue = request.get_json()['seeking_venue']
         seeking_description = request.get_json()['seeking_description']
-        print("HelpMe333")
         artists = Artists(
                         name = name,
                         city  = city,
                         state  = state,
                         phone  = phone,
-                        # TODO: Add genres
-                        # genres = genres,
                         image_link  = image_link,
                         facebook_link  = facebook_link,
                         website_link  = website_link,
                         venue_hunting  = seeking_venue,
                         venue_description  = seeking_description
                     )
-        print("HelpMe444")
         db.session.add(artists)
         db.session.commit()
-        print("HelpMe555")
+        for genre in genres:
+              artist_genres = Genres.query.filter_by(genres=genre).first()
+              artists.genres.append(artist_genres)
+              db.session.commit()
         # on successful db insert, flash success
         flash('Artist ' + name + ' was successfully listed!')
-        print("HelpMe666")
     except:
         error = True
-        print("HelpMe777")
         db.session.rollback()
-        print("HelpMe888")
-
         print(sys.exc_info())
-        print("HelpMe999")
-
         # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
         # on unsuccessful db insert, flash an error instead.
         flash('An error occurred. Artist ' + name + ' could not be listed.')
     finally:
-        print("HelpMeaaa")
         db.session.close()
     if error:
-        print("HelpMebbb")
         abort(500)
     else:
-        print("HelpMeccc")
         # return render_template('pages/home.html')
         return redirect(url_for('index'))
     #   # on successful db insert, flash success
     #   flash('Artist ' + request.form['name'] + ' was successfully listed!')
-    #   # TODO: on unsuccessful db insert, flash an error instead.
+    #   #  on unsuccessful db insert, flash an error instead.
     #   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
     #   return render_template('pages/home.html')
 
