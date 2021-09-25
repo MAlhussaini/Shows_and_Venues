@@ -1,4 +1,4 @@
-{% extends 'layouts/main.html' %} {% block title %}Venue Search{% endblock %} {% block content %}
+{% extends 'layouts/main.html' %} {% block title %}Venue Details{% endblock %} {% block content %}
 <div class="row">
     <div class="col-sm-6">
         <h1 class="monospace">
@@ -9,7 +9,7 @@
         </p>
         <div class="genres">
             {% for genre in venue.genres %}
-            <span class="genre">{{ genre }}</span> {% endfor %}
+            <span class="genre">{{ genre.genres }}</span> {% endfor %}
         </div>
         <p>
             <i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
