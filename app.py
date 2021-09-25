@@ -342,7 +342,21 @@ def show_artist(artist_id):
     "upcoming_shows_count": 3,
   }
   data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_artist.html', artist=data)
+  artist = Artists.query.get(artist_id)
+
+  return render_template('pages/show_artist.html', artist=artist)  
+  now = datetime.now()
+  data = db.session.query(ShowsList,Artists).join(Artists).filter(ShowsList.artist_id==artist_id)
+  past_shows = data.filter(ShowsList.event_time<now)
+  upcoming_shows = data.filter(ShowsList.event_time>=now)
+  
+  return render_template('pages/show_venue.html', 
+                         venue=venue, 
+                         past_shows_count = past_shows.count(), 
+                         past_shows = past_shows.all(), 
+                         upcoming_shows_count = upcoming_shows.count(), 
+                         upcoming_shows = upcoming_shows.all())
+
 
 #  Update
 #  ----------------------------------------------------------------
