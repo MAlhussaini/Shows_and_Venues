@@ -103,3 +103,88 @@ if (location.pathname == "/shows/create") {
             })
     }
 }
+if (document.getElementById('artist_header') !== null) {
+    alert('hey! artists');
+    document.getElementById("artist-form").onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelectorAll('#genres option:checked');
+        const values = Array.from(selected).map(el => el.value);
+        const artistId = document.getElementById("artist_header").dataset.id;
+        console.log(values)
+        console.log(venueId)
+        fetch('/artists/' + artistId + '/edit', {
+                method: 'POST',
+
+                body: JSON.stringify({
+                    'name': document.getElementById('name').value,
+                    // 'city': document.getElementById('city').value,
+                    // 'state': document.getElementById('state').value,
+                    // 'phone': document.getElementById('phone').value,
+                    // 'genres': values,
+                    // 'facebook_link': document.getElementById('facebook_link').value,
+                    // 'image_link': document.getElementById('image_link').value,
+                    // 'website_link': document.getElementById('website_link').value,
+                    // 'seeking_venue': document.getElementById('seeking_venue').checked,
+                    // 'seeking_description': document.getElementById('seeking_description').value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function() {
+                window.location.href = "/";
+            })
+            .catch(function() {
+                window.location.href = "/";
+            })
+    }
+
+}
+if (document.getElementById('venue_header') !== null) {
+    alert('hey! venues');
+
+    document.getElementById("venue-form").onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelectorAll('#genres option:checked');
+        const values = Array.from(selected).map(el => el.value);
+        const venueId = document.getElementById("venue_header").dataset.id;
+        console.log(values)
+        console.log(venueId)
+        console.log('/venues/' + venueId + '/edit')
+        fetch('/venues/' + venueId + '/edit', {
+                method: 'POST',
+
+                body: JSON.stringify({
+                    'name': document.getElementById('name').value,
+                    'city': document.getElementById('city').value,
+                    'state': document.getElementById('state').value,
+                    'address': document.getElementById('address').value,
+                    'phone': document.getElementById('phone').value,
+                    'genres': values,
+                    'facebook_link': document.getElementById('facebook_link').value,
+                    'image_link': document.getElementById('image_link').value,
+                    'website_link': document.getElementById('website_link').value,
+                    'seeking_talent': document.getElementById('talent_hunting').checked,
+                    'seeking_description': document.getElementById('seeking_description').value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                alert('Great!');
+                return response.json();
+            })
+            .then(function() {
+                alert("Nothing happened!!!!!");
+                window.location.href = "/";
+            })
+            .catch(function() {
+                alert("Not so great :'(");
+                window.location.href = "/";
+            })
+    }
+}

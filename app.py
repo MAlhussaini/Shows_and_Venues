@@ -306,7 +306,59 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
-  return redirect(url_for('show_venue', venue_id=venue_id))
+    error = False
+    try:
+        name = request.get_json()['name']
+        city = request.get_json()['city']
+        state = request.get_json()['state']
+        address = request.get_json()['address']
+        phone = request.get_json()['phone']
+        genres = request.get_json()['genres']
+        facebook_link = request.get_json()['facebook_link']
+        image_link = request.get_json()['image_link']
+        website_link = request.get_json()['website_link']
+        seeking_talent = request.get_json()['seeking_talent']
+        seeking_description = request.get_json()['seeking_description']
+        print("Help!!!!!!!!!!!!!11")
+        print(name,city,state,address,phone,image_link,facebook_link,website_link,seeking_talent,seeking_description,sep="\n")
+        print(genres)
+        print("Help!!!!!!!!!!!!!22")
+        # venues = Venues(
+        #             name = name,
+        #             city  = city,
+        #             state  = state,
+        #             address  = address,
+        #             phone  = phone,
+        #             image_link  = image_link,
+        #             facebook_link  = facebook_link,
+        #             website_link  = website_link,
+        #             talent_hunting  = seeking_talent,
+        #             talent_description  = seeking_description
+        #             )
+        # db.session.add(venues)
+        # db.session.commit()
+        # for genre in genres:
+        #       venue_genres = Genres.query.filter_by(genres=genre).first()
+        #       venues.genres.append(venue_genres)
+        #       db.session.commit()
+        # # on successful db insert, flash success
+        # flash('Venue ' + name + ' was successfully edited!')
+    except:
+        error = True
+        # db.session.rollback()
+        print(sys.exc_info())
+        flash('An error occurred. Venue ' + name + ' could not be edited.')
+    finally:
+        print("Help!!!!!!!!!!!!!33")
+        # db.session.close()
+        pass
+    if error:
+        abort(500)
+    else:
+        print("Help!!!!!!!!!!!!!44")
+        # return render_template('pages/home.html')
+        return redirect(url_for('index'))
+        return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
 #  ----------------------------------------------------------------
