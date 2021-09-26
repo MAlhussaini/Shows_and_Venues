@@ -144,16 +144,13 @@ if (document.getElementById('artist_header') !== null) {
 
 }
 if (document.getElementById('venue_header') !== null) {
-    alert('hey! venues');
 
     document.getElementById("venue-form").onsubmit = function(e) {
         e.preventDefault();
         const selected = document.querySelectorAll('#genres option:checked');
         const values = Array.from(selected).map(el => el.value);
         const venueId = document.getElementById("venue_header").dataset.id;
-        console.log(values)
-        console.log(venueId)
-        console.log('/venues/' + venueId + '/edit')
+
         fetch('/venues/' + venueId + '/edit', {
                 method: 'POST',
 
@@ -175,16 +172,13 @@ if (document.getElementById('venue_header') !== null) {
                 }
             })
             .then(function(response) {
-                alert('Great!');
                 return response.json();
             })
             .then(function() {
-                alert("Nothing happened!!!!!");
-                window.location.href = "/";
+                // window.location.href = "/";
             })
             .catch(function() {
-                alert("Not so great :'(");
-                window.location.href = "/";
+                // window.location.href = "/";
             })
     }
 }

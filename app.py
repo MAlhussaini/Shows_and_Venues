@@ -302,11 +302,9 @@ def edit_venue(venue_id):
   genres = Genres.query.all()
   return render_template('forms/edit_venue.html', form=form, venue=venue, genres=genres)
 
-# TODO
+# *Completed*
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  # TODO: take values from the form submitted, and update existing
-  # venue record with ID <venue_id> using the new attributes
     error = False
     try:
         name = request.get_json()['name']
@@ -320,47 +318,37 @@ def edit_venue_submission(venue_id):
         website_link = request.get_json()['website_link']
         seeking_talent = request.get_json()['seeking_talent']
         seeking_description = request.get_json()['seeking_description']
-        print("Help!!!!!!!!!!!!!11")
-        update = Venues.query.get(venue_id)
-        print(genres)
-
-        print("Help!!!!!!!!!!!!!22aaaaaa")
-        update.name = name
-        update.city = city
-        update.state = state
-        update.address = address
-        update.facebook_link = facebook_link
-        update.image_link = image_link
-        update.website_link = website_link
-        update.talent_hunting = seeking_talent
-        update.talent_description = seeking_description
-        
-        print("Help!!!!!!!!!!!!!22bbbbbb")
+        venues = Venues.query.get(venue_id)
+        venue_genres = db.session.query(Venues).get(venue_id)
+        venue_genres.genres = []
+        venues.name = name
+        venues.city = city
+        venues.state = state
+        venues.address = address
+        venues.phone = phone
+        venues.facebook_link = facebook_link
+        venues.image_link = image_link
+        venues.website_link = website_link
+        venues.talent_hunting = seeking_talent
+        venues.talent_description = seeking_description
         db.session.commit()
-        print("Help!!!!!!!!!!!!!22ccccc")
-
-        # for genre in genres:
-        #       venue_genres = Genres.query.filter_by(genres=genre).first()
-        #       venues.genres.append(venue_genres)
-        #       db.session.commit()
+        for genre in genres:
+            venue_genres = Genres.query.filter_by(genres=genre).first()
+            venues.genres.append(venue_genres)
+            db.session.commit()
         # # on successful db insert, flash success
-        # flash('Venue ' + name + ' was successfully edited!')
+        flash('Venue ' + name + ' was successfully edited!')
     except:
-        print("Help!!!!!!!!!!!!!fffffff")
         error = True
         db.session.rollback()
         print(sys.exc_info())
         flash('An error occurred. Venue ' + name + ' could not be edited.')
     finally:
-        print("Help!!!!!!!!!!!!!33")
         db.session.close()
         pass
     if error:
         abort(500)
     else:
-        print("Help!!!!!!!!!!!!!44")
-        # return render_template('pages/home.html')
-        return redirect(url_for('index'))
         return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
