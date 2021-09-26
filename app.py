@@ -6,6 +6,7 @@ import json
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
+from sqlalchemy.sql.expression import update
 from werkzeug.wrappers import response
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -177,7 +178,7 @@ def create_venue_submission():
     error = False
     try:
         name = request.get_json()['name']
-        city = request.get_json()['city']
+        city = request.get_json()['city'].title()
         state = request.get_json()['state']
         address = request.get_json()['address']
         phone = request.get_json()['phone']
@@ -309,7 +310,7 @@ def edit_venue_submission(venue_id):
     error = False
     try:
         name = request.get_json()['name']
-        city = request.get_json()['city']
+        city = request.get_json()['city'].title()
         state = request.get_json()['state']
         address = request.get_json()['address']
         phone = request.get_json()['phone']
@@ -320,23 +321,24 @@ def edit_venue_submission(venue_id):
         seeking_talent = request.get_json()['seeking_talent']
         seeking_description = request.get_json()['seeking_description']
         print("Help!!!!!!!!!!!!!11")
-        print(name,city,state,address,phone,image_link,facebook_link,website_link,seeking_talent,seeking_description,sep="\n")
+        update = Venues.query.get(venue_id)
         print(genres)
-        print("Help!!!!!!!!!!!!!22")
-        # venues = Venues(
-        #             name = name,
-        #             city  = city,
-        #             state  = state,
-        #             address  = address,
-        #             phone  = phone,
-        #             image_link  = image_link,
-        #             facebook_link  = facebook_link,
-        #             website_link  = website_link,
-        #             talent_hunting  = seeking_talent,
-        #             talent_description  = seeking_description
-        #             )
-        # db.session.add(venues)
-        # db.session.commit()
+
+        print("Help!!!!!!!!!!!!!22aaaaaa")
+        update.name = name
+        update.city = city
+        update.state = state
+        update.address = address
+        update.facebook_link = facebook_link
+        update.image_link = image_link
+        update.website_link = website_link
+        update.talent_hunting = seeking_talent
+        update.talent_description = seeking_description
+        
+        print("Help!!!!!!!!!!!!!22bbbbbb")
+        db.session.commit()
+        print("Help!!!!!!!!!!!!!22ccccc")
+
         # for genre in genres:
         #       venue_genres = Genres.query.filter_by(genres=genre).first()
         #       venues.genres.append(venue_genres)
@@ -344,13 +346,14 @@ def edit_venue_submission(venue_id):
         # # on successful db insert, flash success
         # flash('Venue ' + name + ' was successfully edited!')
     except:
+        print("Help!!!!!!!!!!!!!fffffff")
         error = True
-        # db.session.rollback()
+        db.session.rollback()
         print(sys.exc_info())
         flash('An error occurred. Venue ' + name + ' could not be edited.')
     finally:
         print("Help!!!!!!!!!!!!!33")
-        # db.session.close()
+        db.session.close()
         pass
     if error:
         abort(500)
@@ -374,7 +377,7 @@ def create_artist_submission():
     error = False
     try:
         name = request.get_json()['name']
-        city = request.get_json()['city']
+        city = request.get_json()['city'].title()
         state = request.get_json()['state']
         phone = request.get_json()['phone']
         genres = request.get_json()['genres']
